@@ -5,6 +5,7 @@ DockerCompose setup for collecting and monitoring metrics using Prometheus.
 ```bash
 docker-compose up -d 
 ```
+Visit `https://localhost/federate` to explore metrics.
 
 ## Docker Compose
 
