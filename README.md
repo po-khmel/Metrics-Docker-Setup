@@ -20,10 +20,12 @@ Five Docker containers:
 ## Nginx Configuration
 
 The Nginx configuration `nginx/nginx.conf` sets up Nginx as a reverse proxy for Prometheus and defines SSL/TLS settings for secure communication.   
-SSL certificates are self signed:
+SSL certificate was self signed and placed in `nginx` directory:
 ```bash
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout nginx-selfsigned.key -out nginx-selfsigned.crt
 ```
+**!NB! for security reasons I removed certificate and key from public repo**  
+
 A route for Prometheus federation is  `/federate/`   
 Access to other paths is denied.
 
