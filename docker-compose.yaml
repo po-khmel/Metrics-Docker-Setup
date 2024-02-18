@@ -1,0 +1,66 @@
+version: "3"
+
+services:
+  load-balancer:
+    image: nginx:latest
+    container_name: nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/nginx-selfsigned.crt:/etc/nginx/ssl/nginx-selfsigned.crt
+      - ./nginx/nginx-selfsigned.key:/etc/nginx/ssl/nginx-selfsigned.key
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - localnet
+    depends_on:
+      - prometheus
+  
+  nginx-exporter:
+    image: nginx/nginx-prometheus-exporter
+    container_name: nginx-exporter
+    ports:
+      - 9113:9113
+    command: 
+      - -nginx.scrape-uri=http://load-balancer:80/metrics # metrics endpoint from nginx config
+    networks:
+      - localnet
+    depends_on:
+      - load-balancer
+      
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml # required if 'command' is used
+      - --web.route-prefix=/                         # defines Prometheus’ API inside the container
+      - --web.external-url=/federate/                # controls the externally accessible path
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - localnet
+    ports:
+      - 9090:9090
+
+  node-exporter:
+    image: prom/node-exporter
+    container_name: node-exporter
+    networks:
+      - localnet
+    ports:
+      - 9100:9100
+
+  cgroup-exporter:
+    build:
+      context: cgroup-pids-exporter
+    container_name: cgroup-exporter
+    networks:
+      - localnet
+    ports:
+      - 9101:9101
+    volumes:
+      - /sys/fs/cgroup/pids/:/host/sys/fs/cgroup/pids/:ro
+
+networks:
+  localnet:
+    driver: bridge
