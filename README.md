@@ -19,17 +19,17 @@ Five Docker containers:
 
 ## Nginx Configuration
 
-The Nginx configuration `nginx/nginx.conf` sets up Nginx as a reverse proxy for Prometheus and defines SSL/TLS settings for secure communication. 
+The Nginx configuration `nginx/nginx.conf` sets up Nginx as a reverse proxy for Prometheus and defines SSL/TLS settings for secure communication.   
 SSL certificates are self signed:
 ```bash
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout nginx-selfsigned.key -out nginx-selfsigned.crt
 ```
-A route for Prometheus federation is  `/federate/` 
+A route for Prometheus federation is  `/federate/`   
 Access to other paths is denied.
 
 ## Prometheus Configuration
 
-`scrape_interval` for all metrics is set to 10s
+`scrape_interval` for all metrics is set to 10s  
 
 Additional commands in Docker compose file:
 - `--web.route-prefix` defines Prometheus’ API inside the container
